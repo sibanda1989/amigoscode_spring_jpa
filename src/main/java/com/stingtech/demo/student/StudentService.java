@@ -44,14 +44,6 @@ public class StudentService {
         studentRepository.deleteById(studentId);
     }
 
-//    public void studentEmailExists(Student student){
-//        Optional<Student> studentOptional =  studentRepository
-//                .findStudentByEmail(student.getEmail());
-//        if (studentOptional.isPresent()){
-//            throw new IllegalStateException("email taken");
-//        }
-//    }
-
     @Transactional
     public void updateStudent(Long studentId, String name, String email) {
         //find if student exists -> edit name, email.. if not throw exception
