@@ -23,7 +23,11 @@ public class StudentService {
     }
 
     public void addNewStudent(Student student) {
-        studentEmailExists(student);
+        Optional<Student> studentOptional =  studentRepository
+                .findStudentByEmail(student.getEmail());
+        if (studentOptional.isPresent()){
+            throw new IllegalStateException("email taken");
+        }
         studentRepository.save(student);
         System.out.println(student);
     }
@@ -40,19 +44,19 @@ public class StudentService {
         studentRepository.deleteById(studentId);
     }
 
-    public void studentEmailExists(Student student){
-        Optional<Student> studentOptional =  studentRepository
-                .findStudentByEmail(student.getEmail());
-        if (studentOptional.isPresent()){
-            throw new IllegalStateException("email taken");
-        }
-    }
+//    public void studentEmailExists(Student student){
+//        Optional<Student> studentOptional =  studentRepository
+//                .findStudentByEmail(student.getEmail());
+//        if (studentOptional.isPresent()){
+//            throw new IllegalStateException("email taken");
+//        }
+//    }
 
     @Transactional
     public void updateStudent(Long studentId, String name, String email) {
         //find if student exists -> edit name, email.. if not throw exception
         Student student =  studentRepository
-                .findById(studentId) .orElseThrow(() ->
+                .findById(studentId).orElseThrow(() ->
             new IllegalStateException( "student with id " + studentId + " does not exist"));
 
         if (name != null && !name.isEmpty() && !Objects.equals(student.getName(), name)){
@@ -60,7 +64,11 @@ public class StudentService {
         }
 
         if (email != null && !email.isEmpty() && !Objects.equals(student.getEmail(), email)){
-            studentEmailExists(student);
+            Optional<Student> studentOptional =  studentRepository
+                    .findStudentByEmail(student.getEmail());
+            if (studentOptional.isPresent()){
+                throw new IllegalStateException("email taken");
+            }
             student.setEmail(email);
         }
     }
